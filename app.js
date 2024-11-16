@@ -32,7 +32,10 @@ const io = new Server(server);
 io.on('connection', async (socket) => {
     socket.on('afficher_ch', async (data) => {
         try {
-            const chambre = await Chambre.find({ hotel: data.hotel }).lean();
+            const chambre = await Chambre.find({
+                hotel: data.hotel,
+                reservee: 'false',
+            }).lean();
             console.log({
                 hotel: data.hotel,
                 chambres: JSON.stringify(chambre),
@@ -46,7 +49,25 @@ io.on('connection', async (socket) => {
             console.error('Error fetching messages:', err);
         }
     });
+    socket.on('updatech', async (data) => {
+        try {
+            const chambre = await Chambre.findByIdAndUpdate(
+                data.id,
+                {
+                    hotel: data.hotel,
+                    nom_client: data.nom_client,
+                    reservee: 'true',
+                },
+                { new: true }
+            ).lean();
 
+            socket.emit('updateinfo', {
+                chambre: JSON.stringify(chambre),
+            });
+        } catch (err) {
+            console.error('Error fetching messages:', err);
+        }
+    });
     socket.on('disconnect', () => {
         console.log('A user disconnected');
     });

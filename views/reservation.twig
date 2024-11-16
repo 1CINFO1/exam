@@ -80,8 +80,10 @@
 		<button id="reserver">Reserver</button>
 		<button id="afficher">Afficher Chambre</button>
 	</div>
-	<div id="aff">
-	</div>
+	<div id="aff"></div>
+	<div id="reser"></div>
+
+
 
 	<script src="/socket.io/socket.io.js"></script>
 
@@ -92,36 +94,15 @@
 		const resevBody = document.getElementById('resev_body');
 		const hotelInput = document.getElementById('hotel_input');
 		const chambreInput = document.getElementById('chambre_input');
-		const reserver = document.getElementById('reserver');
+		const reserverBtn = document.getElementById('reserver');
 		const afficherBtn = document.getElementById('afficher');
 		const info_div = document.getElementById('aff');
 
+		const reser_div = document.getElementById('reser');
 
 
 
 
-		// envoyer.addEventListener('click', () => {
-		// 	const nom = nameInput.value;
-		// 	const joueur_1 = joueur_1Input.value;
-		// 	const joueur_2 = joueur_2Input.value;
-		// 	if (!nom.trim()) {
-		// 		alert('missing name')
-		// 		return
-		// 	}
-		// 	if (!joueur_1.trim()) {
-		// 		alert('missing joueur_1')
-		// 		return
-		// 	} if (!joueur_2.trim()) {
-		// 		alert('missing joueur_2')
-		// 		return
-		// 	}
-
-		// 	socket.emit('envoyer', { nom, joueur_1, joueur_2 });
-		// 	nameInput.value = '';
-		// 	joueur_1Input.value = '';
-		// 	joueur_2Input.value = '';
-
-		// });
 
 
 		afficherBtn.addEventListener("click", () => {
@@ -137,7 +118,19 @@
 				appendInfo(data);
 			});
 		})
+		reserverBtn.addEventListener("click", () => {
 
+			if (!chambreInput.value) {
+				alert('hotel id is required')
+				return
+			}
+			socket.emit('updatech', { hotel: hotelInput.value, id: chambreInput.value, nom_client: name })
+
+			socket.on('updateinfo', (data) => {
+
+				updateInfo(data);
+			});
+		})
 		const appendInfo = (data) => {
 			console.log('appendInfo', data);
 
@@ -153,6 +146,21 @@
 				
 				</div>`
 			info_div.appendChild(divElement);
+		};
+		const updateInfo = (data) => {
+
+			const uElement = document.createElement('div');
+			uElement.innerHTML =
+				`<div class='show-parties' >
+					<div>
+					information de la chambre reserver :
+					</div>
+				    <div>
+					chambres: ${data.chambre}
+					</div>
+				
+				</div>`
+			reser_div.appendChild(uElement);
 		};
 	</script>
 </body>
