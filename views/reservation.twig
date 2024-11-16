@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Partie
+	</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0 auto;
+			padding: 15px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.partie {
+			display: flex;
+			gap: 4px;
+			align-items: center;
+			margin-top: 8px;
+
+		}
+
+		.input {
+			outline: none;
+			border: 1px solid gray;
+			border-radius: 5px;
+			padding: 8px;
+			width: 200px;
+		}
+
+		.btns {
+			display: flex;
+			gap: 4px;
+			align-items: center;
+			margin-top: 8px;
+			cursor: pointer;
+
+		}
+
+		#partie_div {
+			margin-top: 15px;
+		}
+
+		#joueur_div {
+			margin-top: 15px;
+		}
+
+		.show-parties {
+			padding: 15px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 16px;
+		}
+
+		.bar {
+			height: 20px;
+			width: 200px;
+			background: #000;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="partie" id="resev_body">
+		<span>Id Hotel:</span>
+		<input type="text" class="input" id="hotel_input" />
+	</div>
+	<div class="partie">
+		<span>ID Chambre:</span>
+		<input type="text" class="input" id="chambre_input" />
+	</div>
+
+
+	<div class="btns">
+		<button id="reserver">Reserver</button>
+		<button id="afficher">Afficher Chambre</button>
+	</div>
+	<div id="aff">
+	</div>
+
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script>
+		const socket = io();
+		name = prompt("saisir votre nom :")
+
+		const resevBody = document.getElementById('resev_body');
+		const hotelInput = document.getElementById('hotel_input');
+		const chambreInput = document.getElementById('chambre_input');
+		const reserver = document.getElementById('reserver');
+		const afficherBtn = document.getElementById('afficher');
+		const info_div = document.getElementById('aff');
+
+
+
+
+
+		// envoyer.addEventListener('click', () => {
+		// 	const nom = nameInput.value;
+		// 	const joueur_1 = joueur_1Input.value;
+		// 	const joueur_2 = joueur_2Input.value;
+		// 	if (!nom.trim()) {
+		// 		alert('missing name')
+		// 		return
+		// 	}
+		// 	if (!joueur_1.trim()) {
+		// 		alert('missing joueur_1')
+		// 		return
+		// 	} if (!joueur_2.trim()) {
+		// 		alert('missing joueur_2')
+		// 		return
+		// 	}
+
+		// 	socket.emit('envoyer', { nom, joueur_1, joueur_2 });
+		// 	nameInput.value = '';
+		// 	joueur_1Input.value = '';
+		// 	joueur_2Input.value = '';
+
+		// });
+
+
+		afficherBtn.addEventListener("click", () => {
+
+			if (!hotelInput.value) {
+				alert('hotel id is required')
+				return
+			}
+			socket.emit('afficher_ch', { hotel: hotelInput.value })
+
+			socket.on('chambreinfo', (data) => {
+
+				appendInfo(data);
+			});
+		})
+
+		const appendInfo = (data) => {
+			console.log('appendInfo', data);
+
+			const divElement = document.createElement('div');
+			divElement.innerHTML =
+				`<div class='show-parties' >
+					<div>
+					chambres non reservees de l'hotel id:${data.hotel}
+					</div>
+				    <div>
+					chambres: ${data.chambres}
+					</div>
+				
+				</div>`
+			info_div.appendChild(divElement);
+		};
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+const hotel= {
+    "nom":"",
+    "adresse": "",
+    "nbChambre": "",
+    "email": ""
+}
+
+ chambre= {
+        numero: ,
+        hotel:"",
+        reservee: "",
+        nom_client:"",
+    },
